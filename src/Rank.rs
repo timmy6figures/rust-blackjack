@@ -89,7 +89,7 @@ impl Rank {
             Seven => "7",
             Eight => "8",
             Nine => "9",
-            Ten => "T",
+            Ten => "Ten",
             Jack => "Jack",
             Queen => "Queen",
             King => "King",

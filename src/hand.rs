@@ -21,7 +21,16 @@ impl Hand {
         self.cards.clear();
     }
 
-    pub fn total_value(&self) -> Vec<u32> {
+    pub fn is_legal_hand(&self) -> bool {
+        for value in self.possible_values() {
+           if (value <= 21){
+               return true;
+           }
+        }
+        false
+    }
+
+    pub fn possible_values(&self) -> Vec<u32> {
         let mut total: Vec<u32> = Vec::from([0]);
         for card in self.cards.iter() {
             if card.value().len() == 1 { // Only one value (not ace)
@@ -39,6 +48,20 @@ impl Hand {
         // Once we are done, we have every combination of cards possible in a vec
         // Remove duplicaltes (Ace + 3 is the same as 3 + Ace), and return
         total.drain(..).collect()
+    }
+
+    pub fn best_hand_value(&self) -> u32 {
+        let mut current_best_value = 0;
+        for value in self.possible_values() {
+           if (value > current_best_value && value <= 21){
+                current_best_value = value;
+           }
+        }
+        current_best_value
+    }
+
+    pub fn first_card_string(&self) -> String {
+        self.cards.first().unwrap().to_string()
     }
 
     pub fn to_string(&self) -> String {

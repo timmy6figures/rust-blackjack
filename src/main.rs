@@ -1,16 +1,8 @@
-#![allow(unused)]
-
 use std::io::stdin;
 
 mod card;
-use crate::card::Card;
-
 mod rank;
-use crate::rank::Rank;
-
 mod suit;
-use crate::suit::Suit;
-
 mod deck;
 use crate::deck::Deck;
 
@@ -25,14 +17,16 @@ fn main() {
     let mut player_hand = Hand::new();
     let mut dealer_hand = Hand::new();
 
-    let mut player_total: u32 = 500;
+    let mut bank_total: u32 = 500;
 
     'game: loop {
 
         player_hand.clear();
         dealer_hand.clear();
 
+        println!("Bank: {}", bank_total);
         let bet = get_bet_amount();
+        bank_total -= bet;
 
         player_hand.add_card(d.draw_card());
         dealer_hand.add_card(d.draw_card());
@@ -40,31 +34,32 @@ fn main() {
         dealer_hand.add_card(d.draw_card());
 
 
-        println!("Your hand:");
-        print!("{}", player_hand.to_string());
-        println!("Value:");
-        println!("{:?}", player_hand.total_value());
+        println!("YOU:");
+        print_hand(&player_hand);
+        println!("DEALER face up card:");
+        println!("{}\n", dealer_hand.first_card_string());
 
 
         // Check for blackjack
-        if (player_hand.total_value().contains(&21)){
+        if player_hand.possible_values().contains(&21){
             println!("Blackjack!");
-            println!("Dealer hand:");
-            println!("{}", player_hand.to_string());
-            println!("Value:");
-            println!("{:?}", player_hand.total_value());
-            if (dealer_hand.total_value().contains(&21)) {
-                println!("Push!")
+
+            println!("DEALER:");
+            print_hand(&dealer_hand);
+
+            if dealer_hand.possible_values().contains(&21) {
+                println!("Push!");
+                bank_total += bet;
             } else {
                 println!("You win!");
-                player_total += bet * 2;
-                break 'game; // This is kinda a cool feature
+                bank_total += bet * 2;
             }
+            continue 'game; 
         }
 
 
         let mut hitting: bool;
-        let mut bust = true;
+        let mut bust;
 
         loop {
             hitting = match get_next_move().as_str() {
@@ -76,14 +71,12 @@ fn main() {
             if hitting {
                 player_hand.add_card(d.draw_card());
 
-                println!("Your hand:");
-                print!("{}", player_hand.to_string());
-                println!("Value:");
-                println!("{:?}", player_hand.total_value());
+                println!("YOU:");
+                print_hand(&player_hand);
 
                 // Check if bust
                 bust = true;
-                for num in player_hand.total_value().into_iter(){
+                for num in player_hand.possible_values().into_iter(){
                     if num <= 21 {
                         bust = false;
                     }
@@ -94,9 +87,43 @@ fn main() {
             }
 
 
-            if bust {break;} 
+            if bust {println!("Bust!"); continue 'game;} 
+            if !hitting {break;}
         } 
 
+        println!("Stand");
+
+        while dealer_hand.is_legal_hand() {
+            dealer_hand.add_card(d.draw_card());
+            for value in dealer_hand.possible_values() {
+                if value >= 17 {
+                    break;
+                }
+            }
+        }
+
+        println!("DEALER:");
+        print_hand(&dealer_hand);
+
+        println!("YOU:");
+        print_hand(&player_hand);
+
+        // Check if dealer bust
+        if !dealer_hand.is_legal_hand() {
+            println!("DEALER bust!");
+            bank_total += bet * 2
+        }
+
+        // Check if push
+        if dealer_hand.best_hand_value() == player_hand.best_hand_value() {
+            println!("Push!");
+            bank_total += bet;
+        }
+        // Check if win 
+        if dealer_hand.best_hand_value() < player_hand.best_hand_value() {
+            println!("You win!");
+            bank_total += bet*2;
+        }
 
     }
 
@@ -118,11 +145,20 @@ fn get_bet_amount() -> u32 {
 fn get_next_move() -> String {
 
     // Get next move
-    println!("Hit or stand?");
+    println!("Hit or stand? (H or S)");
     let mut input_string = String::new();
 
     stdin().read_line(&mut input_string)
         .ok()
         .expect("Failed to read line");
+    println!("");
     input_string
+
+}
+
+fn print_hand(h: &Hand) {
+    print!("{}", h.to_string());
+    print!("Value:");
+    println!("{:?}\n", h.possible_values());
+
 }
