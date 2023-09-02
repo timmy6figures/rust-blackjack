@@ -1,6 +1,7 @@
 use crate::suit::Suit;
 use crate::rank::Rank;
 use std::fmt;
+use std::collections::HashSet;
 
 
 #[derive(Copy, Clone)]
@@ -18,6 +19,10 @@ impl Card {
 
     pub fn to_string(&self) -> String {
         format!("{} of {} ", self.rank.to_string(), self.suit.to_string())
+    }
+
+    pub fn value(&self) -> Vec<u32> {
+       self.rank.value() 
     }
 
     pub fn all_cards() -> Vec<Card> {
@@ -79,19 +84,12 @@ impl Card {
         cards.push(Card {suit: Suit::Hearts, rank: Rank::Queen});
         cards.push(Card {suit: Suit::Hearts, rank: Rank::King});
 
-
-
         cards
-
     }
-
-
 }
 
 impl fmt::Display for Card {
-
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{} of {}", self.rank.to_string(), self.suit.to_string(),)
     }
-
 }

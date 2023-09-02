@@ -1,6 +1,10 @@
 use std::vec::Vec;
-use std::fmt;
+use std::{fmt, thread};
 use std::string::String;
+
+use rand::thread_rng;
+use rand::seq::SliceRandom;
+
 
 use crate::card::Card;
 use crate::rank::Rank;
@@ -25,7 +29,10 @@ impl Deck {
     pub fn draw_card(&mut self) -> Card {
 //       Card {suit: Suit::Clubs, rank: Rank::King} 
 //       let mut card_to_draw = self.cards[0];
-       self.cards.remove(0)
+        let card: Card = self.cards.remove(0);
+        self.delt_cards.push(card.clone());
+        card
+
 
     }
 
@@ -33,8 +40,8 @@ impl Deck {
         self.cards.len()
     }
 
-    pub fn shuffle() {
-
+    pub fn shuffle(&mut self) {
+        self.cards.shuffle(&mut thread_rng()); 
     }
 
     pub fn undelt_cards_string(&self) -> String {

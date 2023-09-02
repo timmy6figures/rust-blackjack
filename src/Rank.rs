@@ -1,4 +1,5 @@
 use self::Rank::*;
+use std::collections::HashSet;
 
 #[derive(Copy, Clone)]
 pub enum Rank {
@@ -18,6 +19,25 @@ pub enum Rank {
 }
 
 impl Rank {
+
+    // This is a hash set because it returns a list of potential values; Ace can be 1 or 11
+    pub fn value(&self) -> Vec<u32> {
+        match self {
+            Ace => Vec::from([1,11]),
+            Two => Vec::from([2]),
+            Three => Vec::from([3]),
+            Four => Vec::from([4]),
+            Five => Vec::from([5]),
+            Six => Vec::from([6]),
+            Seven => Vec::from([7]),
+            Eight => Vec::from([8]),
+            Nine => Vec::from([9]),
+            Ten => Vec::from([10]),
+            Jack => Vec::from([10]),
+            Queen => Vec::from([10]),
+            King => Vec::from([10]),
+        }
+    }
 
     pub fn to_char(&self) -> char{
         match self {
