@@ -27,13 +27,9 @@ impl Deck {
     }
 
     pub fn draw_card(&mut self) -> Card {
-//       Card {suit: Suit::Clubs, rank: Rank::King} 
-//       let mut card_to_draw = self.cards[0];
         let card: Card = self.cards.remove(0);
         self.delt_cards.push(card.clone());
         card
-
-
     }
 
     pub fn cards_left(&self) -> usize {
