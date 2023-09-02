@@ -1,7 +1,6 @@
-use std::fmt;
+use self::Suit::*;
 
-use Suit::*;
-
+#[derive(Copy, Clone)]
 pub enum Suit {
     Spades,
     Clubs,
@@ -9,8 +8,23 @@ pub enum Suit {
     Hearts
 }
 
-impl fmt::Display for Suit {
-fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self)
+impl Suit {
+
+    pub fn to_char(&self) -> char {
+        match self {
+            Spades => 'S',
+            Clubs => 'C',
+            Hearts => 'H',
+            Diamonds => 'D',
+        }
+    }
+
+    pub fn to_string(&self) -> &str {
+        match self {
+            Spades => "Spades",
+            Clubs => "Clubs",
+            Diamonds => "Diamonds",
+            Hearts => "Hearts",
+        }
     }
 }
