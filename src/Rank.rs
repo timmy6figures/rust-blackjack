@@ -20,7 +20,7 @@ pub enum Rank {
 
 impl Rank {
 
-    // This is a hash set because it returns a list of potential values; Ace can be 1 or 11
+    // This is a vec set because it returns a list of potential values; Ace can be 1 or 11
     pub fn value(&self) -> Vec<u32> {
         match self {
             Ace => Vec::from([1,11]),
